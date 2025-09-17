@@ -16,6 +16,10 @@ class MyOnPolicyRunner(OnPolicyRunner):
         if self.logger_type in ["wandb"]:
             policy_path = path.split("model")[0]
             filename = policy_path.split("/")[-2] + ".onnx"
+            # 调试：打印所有可用属性
+            print("Available attributes:", [attr for attr in dir(self) if not attr.startswith('_')])
+            print("Algorithm attributes:", [attr for attr in dir(self.alg) if not attr.startswith('_')])
+            
             export_policy_as_onnx(self.alg.policy, normalizer=self.alg.obs_normalizer, path=policy_path, filename=filename)
             attach_onnx_metadata(self.env.unwrapped, wandb.run.name, path=policy_path, filename=filename)
             wandb.save(policy_path + filename, base_path=os.path.dirname(policy_path))
