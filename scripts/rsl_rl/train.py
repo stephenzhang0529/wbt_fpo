@@ -110,7 +110,6 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     import pathlib
 
     import wandb
-
     api = wandb.Api()
     artifact = api.artifact(registry_name)
     env_cfg.commands.motion.motion_file = str(pathlib.Path(artifact.download()) / "motion.npz")  # 下载动作数据文件，写入环境配置
@@ -144,9 +143,9 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         env = multi_agent_to_single_agent(env)  # 如果是多智能体环境，转为单智能体
 
     # wrap around environment for rsl-rl
-    env = RslRlVecEnvWrapper(env)  # 用RslRlVecEnvWrapper包装环境，适配RSL-RL算法
+    env = RslRlVecEnvWrapper(env)  # 用RslRlVecEnvWrapper包装环境，适配RSL-RL算法的训练流程和接口
 
-    # create runner from rsl-rl
+    # create runner from rsl-rl 实际上用的是MotionOnPolicyRunner
     runner = OnPolicyRunner(
         env, agent_cfg.to_dict(), log_dir=log_dir, device=agent_cfg.device, registry_name=registry_name
     )  # 创建PPO Runner
